@@ -274,7 +274,7 @@
                     "path": "<Mouse>/rightButton",
                     "interactions": "Press(behavior=1)",
                     "processors": "",
-                    "groups": "",
+                    "groups": "KeyboardMouse",
                     "action": "UnLock",
                     "isComposite": false,
                     "isPartOfComposite": false

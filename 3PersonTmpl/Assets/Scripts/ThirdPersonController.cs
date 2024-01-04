@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Firesplash.GameDevAssets.SocketIO;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
 #endif
@@ -14,6 +15,9 @@ namespace StarterAssets
 #endif
     public class ThirdPersonController : MonoBehaviour
     {
+        public SocketIOCommunicator sioCom;
+        public Vector3 posTarget ;
+
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
         public float MoveSpeed = 2.0f;
@@ -228,6 +232,7 @@ namespace StarterAssets
             float speedOffset = 0.1f;
             float inputMagnitude = _input.analogMovement ? _input.move.magnitude : 1f;
 
+           // Debug.Log(inputMagnitude) ;   
             // accelerate or decelerate to target speed
             if (currentHorizontalSpeed < targetSpeed - speedOffset ||
                 currentHorizontalSpeed > targetSpeed + speedOffset)
@@ -271,12 +276,37 @@ namespace StarterAssets
             _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
                              new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 
+                Vector3 newTarget =transform.position+targetDirection.normalized * _speed + new Vector3(0.0f, _verticalVelocity, 0.0f);
+                Vector3 newTarget1 =transform.position+targetDirection.normalized * _speed;//+ new Vector3(0.0f, _verticalVelocity, 0.0f);
+                newTarget1.y=0;
+                Vector3 posTarget1 = new Vector3(posTarget.x,0f,posTarget.z); 
+            if ((newTarget1 - posTarget1).magnitude>0.1)
+                {
+                    Debug.Log("posTarget "+posTarget.ToString());
+                    posTarget = newTarget;
+                    Debug.Log("posTarget1 "+posTarget.ToString());
+                    string logData = "{\"id\": \"" + PlayerInfo.instance.id + "\","
+                    + "\"act\": \"" + "m" + "\","
+                    + "\"px\": \"" + posTarget.x.ToString().Replace(",",".") + "\","
+                    + "\"py\": \"" + posTarget.y.ToString().Replace(",",".")+ "\","
+                    + "\"pz\": \"" + posTarget.z.ToString().Replace(",",".") + "\"}";
+
+                   // logData = JsonUtility.ToJson(PlayerInfo.instance);
+                    Debug.Log(logData);
+
+        
+                    sioCom.Instance.Emit("plAct", logData, false);
+
+                };                                                         
+
             // update animator if using character
             if (_hasAnimator)
             {
                 _animator.SetFloat(_animIDSpeed, _animationBlend);
                 _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
-            }
+            }    
+
+           
         }
 
         private void JumpAndGravity()

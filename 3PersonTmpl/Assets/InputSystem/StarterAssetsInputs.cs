@@ -40,7 +40,7 @@ namespace StarterAssets
 
 		public void OnLook(InputValue value)
 		{
-			Debug.Log("777");
+			// Debug.Log("777");
 			if(cursorInputForLook 
 			//&& Mouse.current.rightButton.isPressed
 			)
@@ -113,7 +113,7 @@ namespace StarterAssets
 
 		public void LookInput(Vector2 newLookDirection)
 		{
-			Debug.Log("555");
+			// Debug.Log("555");
 			look = newLookDirection;
 		}
 

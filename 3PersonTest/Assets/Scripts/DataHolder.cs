@@ -8,4 +8,6 @@ public static class DataHolder
     public static string port="";
     public static string adress="http://192.168.1.71";
 
+    public static int  updateDelay =100;
+
 }

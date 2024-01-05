@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using TMPro;
+using StarterAssets;
 
 #if HAS_JSON_NET
 //If Json.Net is installed, this is required for Example 6. See documentation for information on how to install Json.NET
@@ -22,6 +23,8 @@ public class SIOLobby : MonoBehaviour
     public ScrollRect scrollChat;
 
     private Boolean chatBotton=false;
+
+    private   ThirdPersonController _thirdPersonController; 
 
     [Serializable]
     struct ItsMeData
@@ -67,6 +70,7 @@ public class SIOLobby : MonoBehaviour
     }
     void Start()
     {
+         _thirdPersonController =  FindObjectOfType<ThirdPersonController>();    
         //sioCom.Instance.Connect();
         scrollChat.onValueChanged.AddListener(ListenerMethod);
         //scrollRect.onValueChanged.AddListener(ListenerMethod);
@@ -249,6 +253,9 @@ public class SIOLobby : MonoBehaviour
 
            // Debug.Log("playerObjects[id].transform.position.x "+playerObjects[id].transform.position.x);
            Debug.Log("act.px "+act.px.ToString());
+           TestMove _testMove = playerObjects[act.id].GetComponent<TestMove>();
+           if (act.act == "m") {_testMove.moveSpeed= _thirdPersonController.MoveSpeed; }
+           else if (act.act == "r") {_testMove.moveSpeed= _thirdPersonController.SprintSpeed;}
            playerObjects[act.id].GetComponent<TestMove>().targetPos.x=act.px;
            playerObjects[act.id].GetComponent<TestMove>().targetPos.y=act.py;
            playerObjects[act.id].GetComponent<TestMove>().targetPos.z=act.pz+2;           

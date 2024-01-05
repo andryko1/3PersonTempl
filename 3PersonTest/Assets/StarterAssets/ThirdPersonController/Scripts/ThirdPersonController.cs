@@ -104,6 +104,8 @@ namespace StarterAssets
 
         private PlayerInput _playerInput;
 
+        private  System.DateTime lastUpdate;
+
 // #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 //         private PlayerInput _playerInput;
 // #endif
@@ -159,6 +161,7 @@ namespace StarterAssets
             // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
+            lastUpdate = System.DateTime.Now;
         }
 
         private void Update()
@@ -168,6 +171,8 @@ namespace StarterAssets
             JumpAndGravity();
             GroundedCheck();
             Move(); 
+            UpdatePosition();
+
         }
 
         private void LateUpdate()
@@ -284,25 +289,25 @@ namespace StarterAssets
                 Vector3 newTarget =transform.position+targetDirection.normalized * _speed + new Vector3(0.0f, _verticalVelocity, 0.0f);
                 Vector3 newTarget1 =transform.position+targetDirection.normalized * _speed;//+ new Vector3(0.0f, _verticalVelocity, 0.0f);
                 newTarget1.y=0;
-                Vector3 posTarget1 = new Vector3(posTarget.x,0f,posTarget.z); 
-            if ((newTarget1 - posTarget1).magnitude>0.1)
-                {
-                    Debug.Log("posTarget "+posTarget.ToString());
-                    posTarget = newTarget;
-                    Debug.Log("posTarget1 "+posTarget.ToString());
-                    string logData = "{\"id\": \"" + PlayerInfo.instance.id + "\","
-                    + "\"act\": \"" + "m" + "\","
-                    + "\"px\": \"" + posTarget.x.ToString().Replace(",",".") + "\","
-                    + "\"py\": \"" + posTarget.y.ToString().Replace(",",".")+ "\","
-                    + "\"pz\": \"" + posTarget.z.ToString().Replace(",",".") + "\"}";
+                // Vector3 posTarget1 = new Vector3(posTarget.x,0f,posTarget.z); 
+            // if ((newTarget1 - posTarget1).magnitude>0.1)
+            //     {
+            //         Debug.Log("posTarget "+posTarget.ToString());
+            //         posTarget = newTarget;
+            //         Debug.Log("posTarget1 "+posTarget.ToString());
+            //         string logData = "{\"id\": \"" + PlayerInfo.instance.id + "\","
+            //         + "\"act\": \"" + "m" + "\","
+            //         + "\"px\": \"" + posTarget.x.ToString().Replace(",",".") + "\","
+            //         + "\"py\": \"" + posTarget.y.ToString().Replace(",",".")+ "\","
+            //         + "\"pz\": \"" + posTarget.z.ToString().Replace(",",".") + "\"}";
 
-                   // logData = JsonUtility.ToJson(PlayerInfo.instance);
-                    Debug.Log(logData);
+            //        // logData = JsonUtility.ToJson(PlayerInfo.instance);
+            //         Debug.Log(logData);
 
         
-                    sioCom.Instance.Emit("plAct", logData, false);
+            //         sioCom.Instance.Emit("plAct", logData, false);
 
-                };                                                         
+            //     };                                                         
 
             // update animator if using character
             if (_hasAnimator)
@@ -422,6 +427,41 @@ namespace StarterAssets
             {
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
             }
+        }
+
+        private void UpdatePosition()
+        {  
+            System.DateTime now = System.DateTime.Now;
+            if ((System.DateTime.Now-lastUpdate).Milliseconds>=DataHolder.updateDelay) {
+                  lastUpdate =  now; 
+                  if ((transform.position -posTarget).magnitude>0.05)
+                  {
+                  posTarget = transform.position;
+                    // Debug.Log("posTarget "+posTarget.ToString());
+                    // posTarget = newTarget;
+                    // Debug.Log("posTarget1 "+posTarget.ToString());
+                    string move = "m";
+                    if (_input.sprint== true) {
+                        move = "r";
+                    }
+                    string logData = "{\"id\": \"" + PlayerInfo.instance.id + "\","
+                    + "\"act\": \"" + move + "\","
+                    + "\"px\": \"" + posTarget.x.ToString().Replace(",",".") + "\","
+                    + "\"py\": \"" + posTarget.y.ToString().Replace(",",".")+ "\","
+                    + "\"pz\": \"" + posTarget.z.ToString().Replace(",",".") + "\"}";
+
+                   // logData = JsonUtility.ToJson(PlayerInfo.instance);
+                    Debug.Log(logData);
+
+        
+                    sioCom.Instance.Emit("plAct", logData, false); 
+                  }
+                        
+
+            }
+            
+            
+
         }
     }
 }

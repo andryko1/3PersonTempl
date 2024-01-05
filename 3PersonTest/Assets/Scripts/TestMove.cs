@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using StarterAssets;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -26,6 +27,9 @@ public class TestMove : MonoBehaviour
   private int _animIDJump;
   private int _animIDFreeFall;
   private int _animIDMotionSpeed;
+
+ 
+  
   // Start is called before the first frame update
   void Start()
   {
@@ -34,7 +38,8 @@ public class TestMove : MonoBehaviour
     targetPos.z = transform.position.z;
 
     _hasAnimator = TryGetComponent(out _animator);
-    _controller = GetComponent<CharacterController>();
+   
+    //_controller = GetComponent<CharacterController>();
     AssignAnimationIDs();
   }
 
@@ -68,29 +73,29 @@ public class TestMove : MonoBehaviour
 
 
     // a reference to the players current horizontal velocity
-    float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
+   // float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
 
-    float speedOffset = 0.1f;
+   // float speedOffset = 0.1f;
     float inputMagnitude = 1f;
 
 
 
     // accelerate or decelerate to target speed
-    if (currentHorizontalSpeed < targetSpeed - speedOffset ||
-        currentHorizontalSpeed > targetSpeed + speedOffset)
-    {
-      // creates curved result rather than a linear one giving a more organic speed change
-      // note T in Lerp is clamped, so we don't need to clamp our speed
-      _speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude,
-          Time.deltaTime * SpeedChangeRate);
+    // if (currentHorizontalSpeed < targetSpeed - speedOffset ||
+    //     currentHorizontalSpeed > targetSpeed + speedOffset)
+    // {
+    //   // creates curved result rather than a linear one giving a more organic speed change
+    //   // note T in Lerp is clamped, so we don't need to clamp our speed
+    //   _speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude,
+    //       Time.deltaTime * SpeedChangeRate);
 
-      // round speed to 3 decimal places
-      _speed = Mathf.Round(_speed * 1000f) / 1000f;
-    }
-    else
-    {
-      _speed = targetSpeed;
-    }
+    //   // round speed to 3 decimal places
+    //   _speed = Mathf.Round(_speed * 1000f) / 1000f;
+    // }
+    // else
+    // {
+    //   _speed = targetSpeed;
+    // }
 
     _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
     if (_animationBlend < 0.01f) _animationBlend = 0f;
@@ -103,7 +108,7 @@ public class TestMove : MonoBehaviour
 
    
     var offset1 = new Vector3(offset.x, 0f, offset.z);
-    if (offset1.magnitude < 0.1f)
+    if (offset1.magnitude < 0.05f)
     {
 
       _animationBlend = 0f;
@@ -127,8 +132,10 @@ public class TestMove : MonoBehaviour
     Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
 
     // move the player
-    _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
-                             new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+    // _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
+    //                          new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+
+    transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime );
 
     // update animator if using character
     if (_hasAnimator)

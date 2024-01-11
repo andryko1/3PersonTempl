@@ -39,7 +39,7 @@ namespace StarterAssets
 		}
 		public void OnLook(InputValue value)
 		{
-			 Debug.Log("777 "+cursorInputForLook.ToString());
+			// Debug.Log("777 "+cursorInputForLook.ToString());
 			if(cursorInputForLook)
 			{
 				LookInput(value.Get<Vector2>());
@@ -54,13 +54,13 @@ namespace StarterAssets
 	public void OnLock(InputValue value)
 		{
 			cursorInputForLook = true;
-			Debug.Log("Lock "+Mouse.current.rightButton.isPressed.ToString());
+			//Debug.Log("Lock "+Mouse.current.rightButton.isPressed.ToString());
 			Cursor.lockState = CursorLockMode.Locked ;
 		}
 		public void OnUnLock(InputValue value)
 		{ 
 			cursorInputForLook = false;
-			Debug.Log("UnLock "+ Mouse.current.rightButton.isPressed.ToString());
+			//Debug.Log("UnLock "+ Mouse.current.rightButton.isPressed.ToString());
 			Cursor.lockState =  CursorLockMode.None;
 			look = Vector2.zero;
 		}

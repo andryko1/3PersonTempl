@@ -474,7 +474,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetP: {fileID: 0}
   targetPos: {x: 0, y: 0, z: 0}
-  moveSpeed: 2
+  target_ry: 0
+  moveSpeed: 0
+  g: 1
+  f: 0
+  j: 0
+  m: 0
+  r: 0
   SpeedChangeRate: 10
   RotationSmoothTime: 0.12
 --- !u!95 &244278611
@@ -507,7 +513,7 @@ Transform:
   m_GameObject: {fileID: 244278607}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 2}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6358,7 +6364,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4416926083347132227}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6625,7 +6631,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sioCom: {fileID: 1359549013}
-  posTarget: {x: 0, y: 0, z: 0}
   MoveSpeed: 2
   SprintSpeed: 5.335
   RotationSmoothTime: 0.12
@@ -6648,6 +6653,12 @@ MonoBehaviour:
   JumpTimeout: 0.3
   FallTimeout: 0.15
   Grounded: 1
+  posTarget: {x: 0, y: 0, z: 0}
+  j: 0
+  f: 0
+  g: 1
+  gLast: 1
+  ry: 0
   GroundedOffset: -0.14
   GroundedRadius: 0.28
   GroundLayers:

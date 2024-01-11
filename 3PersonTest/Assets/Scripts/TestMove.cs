@@ -8,7 +8,18 @@ public class TestMove : MonoBehaviour
 {
   public Transform targetP;
   public Vector3 targetPos;
-  public float moveSpeed = 5;
+  public float target_ry;
+  public float moveSpeed = 0f;
+
+ 
+
+  public bool g = true;  
+  public bool f = false;
+  public bool j = false;
+  public bool m = false;
+  public System.DateTime lastUpdate;
+
+  public float r = 0;
 
   public float SpeedChangeRate = 10.0f;
   public float RotationSmoothTime = 0.12f;
@@ -27,6 +38,8 @@ public class TestMove : MonoBehaviour
   private int _animIDJump;
   private int _animIDFreeFall;
   private int _animIDMotionSpeed;
+
+  
 
  
   
@@ -52,14 +65,30 @@ public class TestMove : MonoBehaviour
 
     //MoveTowardsTarget (targetP.position);
     Move();
+    Jump();
 
   }
 
   private void Move()
   {
+   
+   if ((System.DateTime.Now - lastUpdate).TotalMilliseconds >= DataHolder.updateDelay*2 )
+    {
+      g = true;
+      j = false;
+      f = false; 
+      m = false;           
+    }
     var offset = targetPos - transform.position;
     // set target speed based on move speed, sprint speed and if sprint is pressed
-    float targetSpeed = moveSpeed;
+    
+    float targetSpeed=0;
+    if (moveSpeed >=1F && moveSpeed < 5f) {targetSpeed = 2f;}
+    else {
+      if (moveSpeed >=4F) {targetSpeed = 6f;}
+    }
+
+    Debug.Log("targetSpeed "+targetSpeed.ToString());
     // Debug.Log("offset " + offset.ToString());
 
     //Debug.Log("offsetM " + offset.magnitude.ToString());
@@ -96,8 +125,10 @@ public class TestMove : MonoBehaviour
     // {
     //   _speed = targetSpeed;
     // }
+    
+ 
 
-    _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
+    _animationBlend = targetSpeed;//Mathf.Lerp(_animationBlend, targetSpeed, Time.deltaTime * SpeedChangeRate);
     if (_animationBlend < 0.01f) _animationBlend = 0f;
 
     // normalise input direction
@@ -108,12 +139,16 @@ public class TestMove : MonoBehaviour
 
    
     var offset1 = new Vector3(offset.x, 0f, offset.z);
-    if (offset1.magnitude < 0.05f)
+   // Debug.Log("_animationBlend "+  _animationBlend.ToString());
+   //  Debug.Log("offset1.magnitude < 0.05f && offset.x<0f && g " + offset1.magnitude.ToString());
+
+
+    if (offset.magnitude < 0.01f && !m)
     {
-
-      _animationBlend = 0f;
-      inputMagnitude = 1f;
-
+     moveSpeed = 0f;
+     _animationBlend = 0f;
+     inputMagnitude = 1f;
+      //j = false;
       if (_hasAnimator)
       {
         _animator.SetFloat(_animIDSpeed, _animationBlend);
@@ -124,11 +159,20 @@ public class TestMove : MonoBehaviour
     }
 
  _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg;
-    float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity,
+    float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, target_ry, ref _rotationVelocity,
         RotationSmoothTime);
 
     // rotate to face input direction relative to camera position
+    // if (offset1.magnitude >= 0.1f && m)
     transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+    
+    // if (target_ry>=0) {      
+    // //transform.rotation.eulerAngles.Set(0.0f, target_ry, 0.0f);
+    // transform.rotation = Quaternion.Euler(0.0f, target_ry, 0.0f);
+    // Debug.Log(transform.rotation.y.ToString()+" !!! "+ transform.rotation.eulerAngles.y.ToString());
+    // Debug.Log("transform.rotation.eulerAngles.Set "+ target_ry.ToString());
+    // }
+
     Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
 
     // move the player
@@ -145,6 +189,16 @@ public class TestMove : MonoBehaviour
     }
 
     // Debug.Log("ms1 " + targetDirection.normalized.ToString() + "  " + _verticalVelocity.ToString());
+  }
+
+  private void Jump()
+  {
+    _animator.SetBool(_animIDGrounded, g);
+    _animator.SetBool(_animIDJump, j);
+    if (j) {
+      Debug.Log("JJJ "+ j.ToString()+ "g  "+ g.ToString()+ "f  "+ f.ToString());
+    }
+    _animator.SetBool(_animIDFreeFall, f);
   }
 
   private void AssignAnimationIDs()
@@ -187,4 +241,13 @@ public class TestMove : MonoBehaviour
     //     }
     // }
   }
+
+   private void OnLand(AnimationEvent animationEvent)
+    {
+      return;
+      // if (animationEvent.animatorClipInfo.weight > 0.5f)
+      // {
+      //   AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
+      // }
+    }
 }

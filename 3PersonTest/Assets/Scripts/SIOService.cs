@@ -253,6 +253,10 @@ public class NetPlayerAct
     public float px;
     public float py;
     public float pz;
+    public bool j;
+    public bool f;
+    public bool g;
+    public float ry;
 
     public static NetPlayerAct CreateFromJSON(string jsonString)
     {

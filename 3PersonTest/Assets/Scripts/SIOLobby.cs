@@ -242,27 +242,39 @@ public class SIOLobby : MonoBehaviour
       string id = NetPlayerInfo.CreateFromJSON(E.Replace("\\", "")).id;
       Debug.Log("newPl.id " + id);
       // Debug.Log("newPl.status "+st);
-      playerObjects.Add(id, GameObject.Find("PlayerArmature1"));
+      //GameObject variableForPrefab = (GameObject)Resources.Load("/Assets/prefabs/PlayerArmature1.prefab", typeof(GameObject));
+      //Resources.Load("Prefabs/PlayerArmature1", GameObject) as GameObject;
+      
+      GameObject variableForPrefab =Instantiate(Resources.Load<GameObject>("Prefabs/PlayerArmature1"));
+      Debug.Log("PrefabMane  " + variableForPrefab.name);
+      playerObjects.Add(id, variableForPrefab);
+       Debug.Log(" playerObjects "+ playerObjects.ToString());
 
       // Debug.Log("playerObjects[id].transform.position.x " + playerObjects[id].transform.position.x);
       // Debug.Log("playerObjects[id].GetComponent<TestMove>().targetPos.z " + playerObjects[id].GetComponent<TestMove>().targetPos.z);
       ;
     });
 
-
+    
     sioCom.Instance.On("plAct", (E) =>
     {
       string stData = E.Replace("\\", "");
 
       NetPlayerAct act = NetPlayerAct.CreateFromJSON(stData);
-    
+       
+
+      if (!playerObjects.TryGetValue(act.id, out GameObject playerObjectsInst))
+      {
+          playerObjectsInst = Instantiate(Resources.Load<GameObject>("Prefabs/PlayerArmature1"));
+          playerObjects.Add(act.id, playerObjectsInst);
+      }
 
 
-      TestMove _testMove = playerObjects[act.id].GetComponent<TestMove>();
-    
+        TestMove _testMove = playerObjectsInst.GetComponent<TestMove>();
+      Debug.Log("act.id "+act.id.ToString()+"  "+stData);
       if (act.act == "r")
       {
-        Debug.Log(stData);
+      
       //    _testMove.g = act.g;
       //   _testMove.m = false;
       //    if (_testMove.g)

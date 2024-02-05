@@ -88,7 +88,7 @@ public class TestMove : MonoBehaviour
       if (moveSpeed >=4F) {targetSpeed = 6f;}
     }
 
-    Debug.Log("targetSpeed "+targetSpeed.ToString());
+   // Debug.Log("targetSpeed "+targetSpeed.ToString());
     // Debug.Log("offset " + offset.ToString());
 
     //Debug.Log("offsetM " + offset.magnitude.ToString());
